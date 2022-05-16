@@ -11,7 +11,6 @@ export default class Searchbar extends Component {
 
     handleChange = e => {
         this.setState({ pictureName: e.currentTarget.value.toLowerCase() });
-        // console.log();
     };
 
     handleOnSubmit = e => {
@@ -20,13 +19,16 @@ export default class Searchbar extends Component {
             return toast.error('Введіть назву картинки');
         }
         this.props.onSubmit(this.state.pictureName);
-        // console.log(this.state.pictureName);
         this.setState({ pictureName: '' });
     };
 
     render() {
         return (
             <header className={s.Searchbar}>
+                {/* <div className={s.Ukraina}>
+                    <div className={s.Ukraina}>
+                        <img width="199" height="50" srcset="../../img/Ukraina.jpg" alt="Логотип" />
+                    </div> */}
                 <form className={s.SearchForm} onSubmit={this.handleOnSubmit}>
                     <button type="submit" className={s.SearchFormButton}>
                         <span className={s.SearchFormButtonLabel}>Search</span>
@@ -34,13 +36,12 @@ export default class Searchbar extends Component {
                     <input
                         className={s.SearchFormInput}
                         type="text"
-                        // autocomplete="off"
-                        // autofocus
                         placeholder="Search images and photos"
                         value={this.state.pictureName}
                         onChange={this.handleChange}
                     />
                 </form>
+                {/* </div> */}
             </header>
         );
     }
