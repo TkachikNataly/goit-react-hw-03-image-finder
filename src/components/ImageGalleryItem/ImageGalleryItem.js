@@ -21,7 +21,7 @@ export default class ImageGalleryItem extends Component {
             }
             setTimeout(() => {
                 fetch(
-                    `https://pixabay.com/api/?q=cat&page=1&key=25722602-ef4054fc4542d7cb871df6c01&q=${nextName}&image_type=photo&orientation=horizontal&page=${this.props.page}&per_page=12`
+                    `https://pixabay.com/api/?q=cat&page=1&key=25760251-3970e02ca371c5f8341f48ac2&q=${nextName}&image_type=photo&orientation=horizontal&page=${this.props.page}&per_page=12`
                 )
                     .then(response => {
                         if (response.ok) {
