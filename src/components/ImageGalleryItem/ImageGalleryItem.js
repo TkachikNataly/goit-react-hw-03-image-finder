@@ -1,15 +1,17 @@
-import React, { Component } from 'react';
+// import React, { Component } from 'react';
 // import Loader from '../Loader/Loader';
+import React from 'react';
+import PropTypes from 'prop-types';
 import s from './ImageGalleryItem.module.css';
 
-function ImageGalleryItem = ({ URL, ID, onClick }) {
+function ImageGalleryItem({ URL, ID, onClick }) {
     return (
-        <li className={s.ImageGalleryItem} onClick={onClick}>
-            <img src={URL} alt={ID} className={ImaeGallery - image} />
+        <li className={s.ImageGalleryItemImage} onClick={onClick}>
+            <img src={URL} alt={ID} className={ImageGalleryItem} />
         </li>
     );
 }
-mageGalleryItem.propTypes = {
+ImageGalleryItem.propTypes = {
     URL: PropTypes.string.isRequired,
     onClick: PropTypes.func.isRequired,
 };
