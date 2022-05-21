@@ -1,14 +1,13 @@
+import React from 'react';
 import s from './Button.module.css';
 
-function Button({ onClickButton }) {
+function Button({ onClickButton, onChange }) {
     return (
         <button
             className={s.buttonLoad}
-            type="button"
-            onClick={() => onClickButton()}
-        >
-            Load more
-        </button>
+            type='button'
+            onClick={onClickButton}
+        >Load more</button>
     );
 }
 

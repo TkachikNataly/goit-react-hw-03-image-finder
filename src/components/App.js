@@ -60,7 +60,8 @@ export default class App extends Component {
           togleModal={this.togleModal}
           scrollOnLoadButton={this.scrollOnLoadButton}
         />
-        {this.state.buttonLoadMore && <Button onClickButton={this.loadMore} />}
+        {this.buttonLoadMore && <Button onClickButton={this.loadMore}>Load more</Button>}
+        {/* <Button onClickButton={this.loadMore}>Load more</Button> */}
         {this.state.showModal && (
           <Modal
             onClose={this.togleModal}

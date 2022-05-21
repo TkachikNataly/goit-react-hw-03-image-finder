@@ -12,16 +12,9 @@
     padding-top: 12px;
     padding-bottom: 12px;
     color: #fff;
-    background-image: url('../../img/Ukraina.jpg'), linear-gradient(#08caf5, #d4f003);
-    background-size: 78px, cover;
-    background-repeat: no-repeat;
+    background-color: #3f51b5;
     box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2),
         0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
-}
-
-s.Ukraina {
-    display: flex;
-    background-image: url('../../img/Ukraina.jpg');
 }
 
 .SearchForm {
