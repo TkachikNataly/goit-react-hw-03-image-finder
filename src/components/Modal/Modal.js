@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import s from './Modal.module.css';
+
+const modalRoot = document.querySelector('#modal-root');
 
 export default class Modal extends Component {
     componentDidMount() {
@@ -28,7 +31,13 @@ export default class Modal extends Component {
                 <div className={s.modal}>
                     <img src={this.props.refLargImage} alt="" />
                 </div>
-            </div>
+            </div>,
+            modalRoot
         );
     }
 }
+
+Modal.propTypes = {
+    onClose: PropTypes.func.isRequired,
+    refLargImage: PropTypes.string,
+};
