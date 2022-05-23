@@ -1,14 +1,5 @@
-import { Oval } from 'react-loader-spinner';
-import s from './Loader.module.css';
-// import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
+import css from './Loader.module.css';
 
-function Loader() {
-    return (
-        <div className={s.Loader}>
-            <Oval color="#000000" height={80} width={80} />;
-        </div>
-    );
-    // <TailSpin color="#000000" height={80} width={80} />;
+export default function Loader() {
+    return <div className={css.loader}></div>;
 }
-
-export default Loader;

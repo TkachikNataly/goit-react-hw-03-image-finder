@@ -1,43 +1,54 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import PropTypes from 'prop-types';
-import { toast } from 'react-toastify';
-import s from './Searchbar.module.css';
-import 'react-toastify/dist/ReactToastify.css';
+import css from './Searchbar.module.css';
+import { IconContext } from 'react-icons';
+import { BiSearchAlt2 } from 'react-icons/bi';
+import Notiflix from 'notiflix';
 
-export default class Searchbar extends Component {
+class Searchbar extends Component {
+    static propTypes = {
+        onSubmit: PropTypes.func.isRequired,
+    };
+
     state = {
-        pictureName: '',
+        searchInput: '',
     };
 
     handleChange = e => {
-        this.setState({ pictureName: e.currentTarget.value.toLowerCase() });
-        // console.log();
+        this.setState({ searchInput: e.target.value.toLowerCase() });
     };
 
-    handleOnSubmit = e => {
+    handleFormSubmit = e => {
         e.preventDefault();
-        if (this.state.pictureName.trim() === '') {
-            return toast.error('Введіть назву картинки');
+
+        if (this.state.searchInput.trim() === '') {
+            Notiflix.Notify.failure('Please enter a search term!');
+            return;
         }
-        this.props.onSubmit(this.state.pictureName);
-        // console.log(this.state.pictureName);
-        this.setState({ pictureName: '' });
+
+        this.props.onSubmit(this.state.searchInput);
     };
 
     render() {
         return (
-            <header className={s.Searchbar}>
-                <form className={s.SearchForm} onSubmit={this.handleOnSubmit}>
-                    <button type="submit" className={s.SearchFormButton}>
-                        <span className={s.SearchFormButtonLabel}>Search</span>
+            <header className={css.searchbar}>
+                <form onSubmit={this.handleFormSubmit} className={css.searchForm}>
+                    <button type="submit" className={css.searchFormButton}>
+                        <IconContext.Provider
+                            value={{ style: { verticalAlign: 'middle' } }}
+                        >
+                            <BiSearchAlt2 size={24} />
+                        </IconContext.Provider>
+                        <span className={css.searchFormButtonLabel}>Search</span>
                     </button>
+
                     <input
-                        className={s.SearchFormInput}
+                        className={css.searchFormInput}
+                        value={this.state.searchInput}
                         type="text"
-                        // autocomplete="off"
-                        // autofocus
+                        autoComplete="off"
+                        autoFocus
                         placeholder="Search images and photos"
-                        value={this.state.pictureName}
                         onChange={this.handleChange}
                     />
                 </form>
@@ -46,6 +57,9 @@ export default class Searchbar extends Component {
     }
 }
 
-Searchbar.propTypes = {
-    onSubmit: PropTypes.func.isRequired,
-};
+export default Searchbar;
+
+Notiflix.Notify.init({
+    distance: '7px',
+    timeout: 2000,
+});

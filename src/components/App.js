@@ -1,75 +1,154 @@
-import React, { Component } from 'react';
-import { ToastContainer } from 'react-toastify';
-import Searchbar from './Searchbar/Searchbar';
+import { Component } from 'react';
+import Searchbar from './Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
+import fetchImages from 'Api/api';
 import Button from './Button/Button';
-import Modal from './Modal/Modal';
-import s from './App.module.css';
+import Loader from './Loader/Loader';
+import Modal from './Modal';
+import css from './App.module.css';
 
-export default class App extends Component {
+import Notiflix from 'notiflix';
+
+class App extends Component {
   state = {
-    pictureName: '',
-    buttonLoadMore: false,
+    searchInput: '',
     page: 1,
+    isLoading: false,
+    images: null,
+    totalHits: 0,
+    imagesOnPage: 0,
+    error: null,
     showModal: false,
-    largImage: '',
+    currentLargeImageUrl: '',
+    currentImageTags: '',
   };
 
-  handleFormSubmit = pictureName => {
-    this.setState({ pictureName });
+  componentDidUpdate(prevProps, prevState) {
+    const prevQuery = prevState.searchInput;
+    const nextQuery = this.state.searchInput;
+    const prevPage = prevState.page;
+    const nextPage = this.state.page;
+
+    if (nextQuery !== prevQuery) {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+      this.setState({ isLoading: true });
+
+      fetchImages(nextQuery, nextPage)
+        .then(({ hits, totalHits }) => {
+          if (hits.length === 0) {
+            this.setState({ images: null, imagesOnPage: 0, totalHits: 0 });
+            return Promise.reject(
+              new Error(`There is no image with name ${nextQuery}`)
+            );
+          }
+
+          const arrayOfImages = this.createArrayOfImages(hits);
+
+          this.setState({
+            images: arrayOfImages,
+            totalHits,
+            imagesOnPage: hits.length,
+          });
+        })
+
+        .catch(error => {
+          this.setState({ error });
+          Notiflix.Notify.warning(`${error.message}`);
+        })
+
+        .finally(() => this.turnOffLoader());
+    }
+
+    if (nextPage > prevPage) {
+      this.setState({ isLoading: true });
+
+      fetchImages(nextQuery, nextPage)
+        .then(({ hits }) => {
+          const arrayOfImages = this.createArrayOfImages(hits);
+
+          this.setState(prevState => {
+            return { images: [...prevState.images, ...arrayOfImages] };
+          });
+          this.setState({
+            imagesOnPage: this.state.images.length,
+          });
+        })
+        .catch(error => {
+          this.setState({ error });
+        })
+        .finally(() => this.turnOffLoader());
+    }
+  }
+
+  createArrayOfImages = data => {
+    const arrayOfImages = data.map(element => ({
+      tags: element.tags,
+      webformatURL: element.webformatURL,
+      largeImageURL: element.largeImageURL,
+    }));
+    return arrayOfImages;
   };
 
-  showLoadMore = show => {
-    this.setState({ buttonLoadMore: show });
+  turnOffLoader = () => {
+    return this.setState({ isLoading: false });
   };
 
-  loadMore = () => {
+  formSubmitHandler = data => {
+    this.setState({ searchInput: data, page: 1 });
+  };
+
+  nextFetch = () => {
     this.setState(prevState => {
-      return {
-        page: prevState.page + 1,
-      };
+      return { page: prevState.page + 1 };
     });
   };
 
-  togleModal = () => {
+  openModal = event => {
+    const currentLargeImageUrl = event.target.dataset.large;
+    const currentImageTags = event.target.alt;
+
+    this.setState({ currentLargeImageUrl, currentImageTags });
+    this.toggleModal();
+  };
+
+  toggleModal = () => {
     this.setState(({ showModal }) => ({
       showModal: !showModal,
     }));
   };
 
-  handleLargImage = ref => {
-    this.setState({ largImage: ref });
-  };
-
-  scrollOnLoadButton = () => {
-    window.scrollTo({
-      top: document.documentElement.scrollHeight,
-      behavior: 'smooth',
-    });
-  };
-
   render() {
+    const {
+      images,
+      isLoading,
+      showModal,
+      currentLargeImageUrl,
+      currentImageTags,
+      imagesOnPage,
+      totalHits,
+    } = this.state;
+
     return (
-      <div className={s.App}>
-        <Searchbar onSubmit={this.handleFormSubmit} />
-        <ImageGallery
-          pictureName={this.state.pictureName}
-          showLoad={this.showLoadMore}
-          page={this.state.page}
-          showlargImage={this.handleLargImage}
-          togleModal={this.togleModal}
-          scrollOnLoadButton={this.scrollOnLoadButton}
-        />
-        {this.buttonLoadMore && <Button onClickButton={this.loadMore}>Load more</Button>}
-        {/* <Button onClickButton={this.loadMore}>Load more</Button> */}
-        {this.state.showModal && (
+      <div className={css.app}>
+        <Searchbar onSubmit={this.formSubmitHandler} />
+        {images && <ImageGallery images={images} openModal={this.openModal} />}
+        {isLoading && <Loader />}
+        {imagesOnPage >= 12 && imagesOnPage < totalHits && (
+          <Button onClick={this.nextFetch} />
+        )}
+        {showModal && (
           <Modal
-            onClose={this.togleModal}
-            refLargImage={this.state.largImage}
+            imageUrl={currentLargeImageUrl}
+            imageTags={currentImageTags}
+            onClose={this.toggleModal}
           />
         )}
-        <ToastContainer autoClose={2000} position="top-center" />
       </div>
     );
   }
 }
+
+export default App;
